@@ -7,7 +7,9 @@ This directory holds the code and projects that will be completed as I work thro
 Created with `python3.9 -m venv .` under the `selenv` directory which holds the virtual environment.
 
 ## Finding an element using CSS in the console
-To find an element in the console use the structure: `$$("input[id='ipt1']")`
+To find an element in the console use the structure: `$$("input[id='ipt1']")`. 
+A shortcut if using the `id` attribute is to use the `#` (hash). To move down to a child element while using css 
+selectors we use the syntax `div[id='id3'] > h4`.
 ## Finding an element using XPath in the console
 To find an element in the console use the structure: `$x("//button[@name='butn1']")`. <br>
 
