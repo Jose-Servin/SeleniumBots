@@ -18,7 +18,8 @@ By using the XPath, we are able to move up and down the DOM Tree. <br>
 If we get into a situation where the only unique identifier is text or some other property, we start at the 
 lowest child element and implement the `contains()` function and `text()`.
 
-Final example is: `$x("//b[contains(text(),'Product 1')]")`
+Final example is: `$x("//b[contains(text(),'Product 1')]")`. <br>
+We can also simply use `$x("//b[text() = 'Product 1']")`
 
 To "walk up" the DOM we use `/..` which is the equivalent command for `cd ..`. Therefore, if we take the example 
 XPath of our child element and want to move up we use `$x("//b[contains(text(),'Product 1')]/..")`. <br>
@@ -26,7 +27,9 @@ XPath of our child element and want to move up we use `$x("//b[contains(text(),'
 To "walk down" the DOM we simply declare the element type `$x("//b[contains(text(),'Product 1')]/../b")`. This 
 command is 
 saying "start at the unqiue Bold element that contains the text 'Product 1', then walk up the DOM to the `span` and 
-then back down to the `b` element."
+then back down to the `b` element." <br>
+
+XPath is the strategy to use when you are matching on "text". 
 
 ### Why do this?
 This strategy let's us find elements that are NOT unique by first focusing on the unique child element and then 
