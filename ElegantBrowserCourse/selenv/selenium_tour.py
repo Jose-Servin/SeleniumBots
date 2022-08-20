@@ -5,24 +5,23 @@ from selenium.webdriver.support.select import Select
 
 s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
 driver = webdriver.Chrome(service=s)
-route = "https://techstepacademy.com/training-ground"
+route = "https://techstepacademy.com/iframe-training"
 driver.get(url=route)
 
-# Open new tab to RealPython
-driver.execute_script(
-    "window.open('https://realpython.com/','_blank');"
-)
+# we are able to be this broad since there is only one iframe element in our webpage.
+iframe_location = driver.find_element(By.CSS_SELECTOR, "iframe")
 
-# Open new tab to Selenium
-driver.execute_script(
-    "window.open('https://www.selenium.dev/','_blank');"
-)
-# Now that we have two tabs open, we use the driver.window_handles attribute
-tabs = driver.window_handles
-tabs_open = len(tabs)
+driver.switch_to.frame(iframe_location)
 
-# Now we can manually switch to different tabs using the switch_to.windows(handles_obj[index])
-# By default Selenium behavior, the tabs get assigned indexes based on the order which they load
-driver.switch_to.window(tabs[0]) # TechStep loads first
-# driver.switch_to.window((tabs[-1])) # RealPython loads last
-# driver.switch_to.window(tabs[1])  # Selenium loads second
+# Find text inside iframe
+
+text_obj = driver.find_element(By.CSS_SELECTOR, "div[id='block-ec928cee802cf918d26c'] > div > p")
+print(text_obj.text)
+
+# Take driver back to default content
+driver.switch_to.default_content()
+
+# Find title
+title_location = "div[id='lower-logo'] > h1 > a"
+title_obj = driver.find_element(By.CSS_SELECTOR, title_location)
+print(title_obj.text)
