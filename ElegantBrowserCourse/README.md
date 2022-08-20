@@ -6,10 +6,12 @@ This directory holds the code and projects that will be completed as I work thro
 Reminders to future me:
 
 * When working with selenium, put on your detective hat.
+* You are a detective who is building your own Frankenstein.
 * Work slow and THINK.
 * Approach all problems with a strategy in mind.
 * Use your toolbelt.
 * If you can't find an element, walk to it.
+* Write code that is Readable "with an R".
 
 ## Virtual Environment
 
@@ -114,6 +116,29 @@ print("Waiting for Alert....")
 # We will wait until an alert shows up on the page
 WebDriverWait(browser, 10).until(EC.alert_is_present())
 print("Alert appeared!")
+```
+
+## How to deal with Alerts
+
+```python
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import ActionChains
+
+s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
+browser = webdriver.Chrome(service=s)
+route = "https://techstepacademy.com/training-ground"
+browser.get(url=route)
+
+# Click Button
+button = browser.find_element(By.ID, "b1")
+button.click()
+
+alert_obj = Alert(browser)
+alert_obj.accept()
 ```
 
 ## How to navigate the drop-down
@@ -308,3 +333,116 @@ print(title_obj.text)
 ```
 
 ## Selenium Page Objects
+
+What are Page Objects? Classes.
+
+These classes contain useful portions of a webpage presented in readable code format.
+
+On the other end of the spectrum, Page Objects can create unnecessary and confusing levels of abstraction therefore
+they must be done well and with patience.
+
+END GOAL: <br>
+To create automations that in their final run form, can be read by someone who has no exposure to code.
+
+Step 1: <br>
+What is your scope? What actions are you trying to automate? What elements do you want to interact with? Translate
+that into code.
+
+Example Project: <br>
+The scope of this project is
+
+* Navigate to website.
+* input text into Input field
+* Press Button1
+
+### Building a POM skeleton
+
+Step 1: Describe the page you are viewing.
+
+* What is the name of the page?
+* What actions are you doing on what element? Use VERB_NOUN naming convention if possible.
+
+```python
+class TrainingGroundPage:
+    def __int__(self):
+        pass
+
+    def type_into_input(self, text):
+        pass
+
+    def get_input_text(self):
+        pass
+
+    def click_submit_button(self):
+        pass
+```
+
+Step 2: Being assembling your webpage Bot.
+In their most basic forms, POM can have this simple structure.
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.alert import Alert
+
+s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
+my_driver = webdriver.Chrome(service=s)
+
+
+class TrainingGroundPage:
+    def __init__(self, driver):
+        self.driver = driver
+        self.url = "https://techstepacademy.com/training-ground"
+
+    def go(self):
+        self.driver.get(self.url)
+
+    def type_into_input(self, text):
+        input_field = self.driver.find_element(By.ID, 'ipt1')
+        input_field.clear()
+        input_field.send_keys(text)
+        return None
+
+    def get_input_text(self):
+        input_field = self.driver.find_element(By.ID, 'ipt1')
+        input_text = input_field.get_attribute('value')
+        return input_text
+
+    def click_submit_button(self):
+        button = self.driver.find_element(By.ID, 'b1')
+        button.click()
+        return None
+
+    def acknowledge_alert(self):
+        alert_obj = Alert(self.driver)
+        alert_obj.accept()
+        return None
+
+
+# Running Automation
+
+# Giving our Bot a heart
+test_page = TrainingGroundPage(driver=my_driver)
+
+# Defininf Test variables
+my_input_text = "Baker"
+
+# Performing Test options (Running our Bot)
+test_page.go()
+test_page.type_into_input(my_input_text)
+test_page.click_submit_button()
+test_page.acknowledge_alert()
+text_from_input = test_page.get_input_text()
+assert text_from_input == my_input_text, f"Test Failed: Input text does not match! Expected: {my_input_text} ; "
+f"Actual: {text_from_input}  "
+print("Test Passed")
+```
+
+Congratulations! You've created your own baby Frankenstein.
+
+## Selenium Page Objects Part 2
+
+For part two we are going to upgrade our Bot and give it better structure and a nicer framework. 
+
+
