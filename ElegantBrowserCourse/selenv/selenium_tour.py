@@ -1,33 +1,28 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.alert import Alert
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver import ActionChains
+from selenium.webdriver.support.select import Select
 
 s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
-browser = webdriver.Chrome(service=s)
+driver = webdriver.Chrome(service=s)
 route = "https://techstepacademy.com/training-ground"
-browser.get(url=route)
+driver.get(url=route)
 
+# Open new tab to RealPython
+driver.execute_script(
+    "window.open('https://realpython.com/','_blank');"
+)
 
-# Click Button
-button = browser.find_element(By.ID, "b1")
-button.click()
+# Open new tab to Selenium
+driver.execute_script(
+    "window.open('https://www.selenium.dev/','_blank');"
+)
+# Now that we have two tabs open, we use the driver.window_handles attribute
+tabs = driver.window_handles
+tabs_open = len(tabs)
 
-alert_obj = Alert(browser)
-alert_obj.accept()
-
-# Enter Baker and Copy/Paste into second input
-
-browser.find_element(By.ID, "ipt1").send_keys("Baker")
-
-action = ActionChains(browser)
-action.key_down(Keys.COMMAND).send_keys('a').key_up(Keys.COMMAND).perform()
-action.key_down(Keys.COMMAND).send_keys('c').key_up(Keys.COMMAND).perform()
-action.send_keys(Keys.TAB).perform()
-action.send_keys(Keys.TAB).perform()
-action.send_keys(Keys.TAB).perform()
-action.key_down(Keys.COMMAND).send_keys('v').key_up(Keys.COMMAND).perform()
-
-
+# Now we can manually switch to different tabs using the switch_to.windows(handles_obj[index])
+# By default Selenium behavior, the tabs get assigned indexes based on the order which they load
+driver.switch_to.window(tabs[0]) # TechStep loads first
+# driver.switch_to.window((tabs[-1])) # RealPython loads last
+# driver.switch_to.window(tabs[1])  # Selenium loads second
