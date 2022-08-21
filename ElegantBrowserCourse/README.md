@@ -456,7 +456,7 @@ run.py
 ```python
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from pom import TrainingGroundPage
+from training_ground import TrainingGroundPage
 
 s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
 my_driver = webdriver.Chrome(service=s)
@@ -509,7 +509,6 @@ class BaseElement(object):
         self.web_element = None
         # "Element finds its self"
         self.find()
-        self.click()
 
     def find(self):
         """
@@ -535,13 +534,22 @@ class BaseElement(object):
         element.click()
         return None
 
-    def get_text(self):
+    def input_text(self, txt):
+        self.web_element.send_keys(txt)
+        return None
+
+    @property
+    def text(self):
         """
         Returns the text from a found WebElement element.
         :return:
         """
         element_text = self.web_element.text
         return element_text
+
+    def get_attribute(self, attribute_var):
+        attribute = self.web_element.get_attribute(attribute_var)
+        return attribute
 ```
 
 This current state is a bit confusing since it represent a mix of "unofficial" inheritance and broad separation.
