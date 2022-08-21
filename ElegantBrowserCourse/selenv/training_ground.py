@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from base_element import BaseElement
 from base_page import BasePage
+from locators import Locator
 
 
 class TrainingGroundPage(BasePage):
@@ -8,9 +9,8 @@ class TrainingGroundPage(BasePage):
 
     @property
     def button_1(self):
-        btn_locator = (By.ID, "b1")
+        btn_locator = Locator(By.ID, "b1")
         return BaseElement(
             driver=self.driver,
-            by=btn_locator[0],
-            element_location=btn_locator[1]
+            locator=btn_locator
         )

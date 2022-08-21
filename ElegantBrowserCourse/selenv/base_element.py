@@ -3,11 +3,9 @@ import selenium.webdriver.support.expected_conditions as EC
 
 
 class BaseElement(object):
-    def __init__(self, driver, by, element_location):
+    def __init__(self, driver, locator):
         self.driver = driver
-        self.by = by
-        self.element_location = element_location
-        self.elm_locator = (self.by, self.element_location)
+        self.locator = locator
         self.web_element = None
         # "Element finds its self"
         self.find()
@@ -20,7 +18,7 @@ class BaseElement(object):
         """
         # In Selenium the "locator" is the By paired with the element_location represented as a tuple ()
         element = WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.elm_locator))
+            EC.visibility_of_element_located(self.locator))
 
         # Populate the web_element with the element we just found
         self.web_element = element
@@ -32,7 +30,7 @@ class BaseElement(object):
         :return:
         """
         element = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.elm_locator))
+            EC.element_to_be_clickable(self.locator))
         element.click()
         return None
 

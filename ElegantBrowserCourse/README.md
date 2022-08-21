@@ -557,3 +557,13 @@ I am having trouble seeing how the dots connect using this "middle" framework BU
 has taken a greater form and is closer to its final form which is following a true Selenium POM Framework.
 
 ## Selenium POM Final Form
+
+Final POM structure is contained in:
+
+* base_element.py
+* base_page.py
+* trial_page.py
+* run_trial_page.py
+
+## Better Locators
+

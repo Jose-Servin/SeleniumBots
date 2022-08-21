@@ -8,6 +8,7 @@ my_driver = webdriver.Chrome(service=s)
 # Begin Automation
 trial_page = TrialPage(driver=my_driver)
 trial_page.go()
+
 # First Riddle
 trial_page.stone_input.input_text("Rock")
 trial_page.stone_answer.click()
@@ -31,5 +32,8 @@ assert third_riddle_confirmation == "Success!"
 trial_page.submit_answers.click()
 confirmation_txt = trial_page.confirmation_text.text
 assert confirmation_txt == "Trial Complete"
+
+# Proper system resource management
+my_driver.quit()
 
 print("All test complete! CONGRATS!!! POM!!! ")
