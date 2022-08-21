@@ -12,6 +12,7 @@ Reminders to future me:
 * Use your toolbelt.
 * If you can't find an element, walk to it.
 * Write code that is Readable "with an R".
+* Web Automation should be FUN!
 
 ## Virtual Environment
 
@@ -441,8 +442,110 @@ print("Test Passed")
 
 Congratulations! You've created your own baby Frankenstein.
 
-## Selenium Page Objects Part 2
+## Selenium POM Part 2 ("middle form")
 
-For part two we are going to upgrade our Bot and give it better structure and a nicer framework. 
+For part two we are going to upgrade our Bot and give it better structure and a nicer framework. There are three
+pages we use to achieve this.
+
+1. run.py
+2. pom.py (represents our web page in OOP Form)
+3. base_element.py (represents the elements in our webpage in OOP Form)
+
+run.py
+
+```python
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from pom import TrainingGroundPage
+
+s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
+my_driver = webdriver.Chrome(service=s)
+
+# Run Test
+test_page = TrainingGroundPage(driver=my_driver)
+test_page.go()
+assert test_page.button_1.get_text() == "Button1"
+print("All tests complete! ")
+```
+
+pom.py
+
+```python
+from selenium.webdriver.common.by import By
+from base_element import BaseElement
 
 
+class TrainingGroundPage:
+    def __init__(self, driver):
+        self.driver = driver
+        self.url = "https://techstepacademy.com/training-ground"
+
+    def go(self):
+        self.driver.get(self.url)
+
+    @property
+    def button_1(self):
+        btn_locator = (By.ID, "b1")
+        return BaseElement(
+            driver=self.driver,
+            by=btn_locator[0],
+            element_location=btn_locator[1]
+        )
+```
+
+base_element.py
+
+```python
+from selenium.webdriver.support.wait import WebDriverWait
+import selenium.webdriver.support.expected_conditions as EC
+
+
+class BaseElement(object):
+    def __init__(self, driver, by, element_location):
+        self.driver = driver
+        self.by = by
+        self.element_location = element_location
+        self.elm_locator = (self.by, self.element_location)
+        self.web_element = None
+        # "Element finds its self"
+        self.find()
+        self.click()
+
+    def find(self):
+        """
+        General: 'wait up to 10 seconds to find the element we are looking for.'
+        :return:
+        None
+        """
+        # In Selenium the "locator" is the By paired with the element_location represented as a tuple ()
+        element = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(self.elm_locator))
+
+        # Populate the web_element with the element we just found
+        self.web_element = element
+        return None
+
+    def click(self):
+        """
+        General: 'wait up to 10 seconds to find the element we are looking for and perform a click action.'
+        :return:
+        """
+        element = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(self.elm_locator))
+        element.click()
+        return None
+
+    def get_text(self):
+        """
+        Returns the text from a found WebElement element.
+        :return:
+        """
+        element_text = self.web_element.text
+        return element_text
+```
+
+This current state is a bit confusing since it represent a mix of "unofficial" inheritance and broad separation.
+I am having trouble seeing how the dots connect using this "middle" framework BUT none-the-less, our new Bot
+has taken a greater form and is closer to its final form which is following a true Selenium POM Framework.
+
+## Selenium POM Final Form
