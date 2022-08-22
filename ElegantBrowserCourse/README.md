@@ -567,3 +567,103 @@ Final POM structure is contained in:
 
 ## Better Locators
 
+To better organize our Locator objects and eliminate the indexing of the "locator[0]" etc. We introduce a namedtuple
+data type to store our `By.X, 'elemenet_location'`.
+
+```python
+from collections import namedtuple
+
+Locator = namedtuple('Locator', ['by', 'element_location'])
+```
+
+## Selenium "Frankenstein" WebScrapper
+
+By "Frankenstein" we mean, this automation uses the POM framework and can be implemented in real-world scenarios to
+achieve various tasks.
+
+The WHY? <br>
+
+We use the `lxml` scraper because it is a static object that holds all the page source data. This reduces our run
+time tremendously since we are not relying on selenium to find multiple objects. The page source is stored in a
+variables and is made available instantaneously.
+
+1. install `pip install lxml` inside our virtual environment.
+2. Create a "tree" that represents an HTML parser using `tree = etree.HTML(my_driver.page_source)`
+3. To use the `tree.findall()` method, pass in as an XPATH that is NOT relative `".//div"` . This returns back all
+   the `div` elements in our webpage. We can of course, be more specific with our XPath.
+
+NOTE: The whole point of using this lxml parser is to create a "tree" that is closer to the actual element that we
+are looking for. So, we first start with the `pagesource` and then create a tree that represents common structure
+between elements. After this, we move down and find the actual elements we are looking for.
+
+"Start with the page source, create your parent tree for ALL components then slice down."
+
+In its simplest form, our lxml scraper holds this framework.
+
+```python
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from lxml import etree
+
+s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
+my_driver = webdriver.Chrome(service=s)
+
+my_driver.get("https://techstepacademy.com/trial-of-the-stones")
+# creating our tree HTML parser from lxml module
+tree = etree.HTML(my_driver.page_source)
+tree_merchant_divs = tree.findall(".//div/span/..")
+first_merchant = tree_merchant_divs[0]
+first_merchant_name = first_merchant.find('./span/b').text
+```
+
+Now if we translate this script into OOP we get:
+
+```python
+from lxml import etree
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+
+
+class Merchant:
+    def __init__(self, merchant_div):
+        self.name = merchant_div.find('./span/b').text
+        self.wealth = int(merchant_div.find('./p').text)
+
+
+class PageWithMerchants:
+    def __init__(self, page_source):
+        self.tree = etree.HTML(page_source)
+
+    def get_merchants(self):
+        # the locator for the common parent element (div in our case)
+        locator = ".//div/span/.."
+        merchant_divs = self.tree.findall(locator)
+        return [Merchant(merchant_div=merchant) for merchant in merchant_divs]
+
+    def sort_merchant_high_to_low(self):
+        # we use the key + lambda because we are sorting by fields of an object.
+        return sorted(self.get_merchants(), key=lambda x: x.wealth, reverse=True)
+
+    def find_wealthiest_merchant(self):
+        return self.sort_merchant_high_to_low()[0]
+
+
+if __name__ == "__main__":
+    # defining our driver using Selenium
+    s = Service("/Users/joseservin/SeleniumBots/ElegantBrowserCourse/selenv/driver/chromedriver")
+    my_driver = webdriver.Chrome(service=s)
+    my_driver.get("https://techstepacademy.com/trial-of-the-stones")
+    # lxml part starts here
+    html = my_driver.page_source
+    merchant_page = PageWithMerchants(html)
+    wealthiest_merchant = merchant_page.find_wealthiest_merchant()
+    print(f"The wealthiest merchant is {wealthiest_merchant.name} with ${wealthiest_merchant.wealth}")
+```
+
+So now, we can take this same framework and logic and solve:
+
+* find the highest x
+* find the lowest x
+* compare x's 
+
